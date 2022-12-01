@@ -1,3 +1,7 @@
+#
+# Day 1: Calorie Counting
+# https://adventofcode.com/2022/day/1
+#
 def calculate(lines: list[str]):
     calorie_counts = [0]
     for line in lines:
