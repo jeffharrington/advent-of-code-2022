@@ -8,7 +8,6 @@ import string
 def calculate(lines: list[str]):
     SCORE_KEY = list(string.ascii_lowercase) + list(string.ascii_uppercase)
     score = 0
-    i = 0
     for i in range(0, len(lines), 3):
         sack1 = set(lines[i].strip())
         sack2 = set(lines[i + 1].strip())
