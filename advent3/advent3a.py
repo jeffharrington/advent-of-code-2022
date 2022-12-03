@@ -10,7 +10,7 @@ def calculate(lines: list[str]):
     score = 0
     for line in lines:
         line = line.strip()
-        halfway = int(len(line) / 2)
+        halfway = len(line) // 2
         sack1 = set(line[0:halfway])
         sack2 = set(line[halfway:])
         misplaced = (sack1 & sack2).pop()
