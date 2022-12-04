@@ -5,18 +5,17 @@
 def calculate(lines: list[str]):
     score = 0
     for line in lines:
-        e1_beg, e1_end, e2_beg, e2_end = [
+        e1_start, e1_end, e2_start, e2_end = [
             int(section)
             for elf in line.strip().split(",")
             for section in elf.split("-")
         ]
-        if (
-            (e2_beg <= e1_beg <= e2_end)
-            or (e2_beg <= e1_end <= e2_end)
-            or (e1_beg <= e2_beg <= e1_end)
-            or (e1_beg <= e2_end <= e1_end)
-        ):
-            score += 1
+        score += int(
+            (e2_start <= e1_start <= e2_end)
+            or (e2_start <= e1_end <= e2_end)
+            or (e1_start <= e2_start <= e1_end)
+            or (e1_start <= e2_end <= e1_end)
+        )
     return score
 
 
