@@ -17,7 +17,8 @@ def calculate(lines: list[str]):
     return score
 
 
-if __name__ == "__main__":
-    with open("input.txt") as f:
-        lines = f.readlines()
-    print(calculate(lines))
+match __name__:
+    case "__main__":
+        with open("input.txt") as f:
+            lines = f.readlines()
+        print(calculate(lines))
