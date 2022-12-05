@@ -36,8 +36,7 @@ def calculate(lines: list[str]):
     return "".join([stacks[i][-1] for i in range(len(stacks))])
 
 
-match __name__:
-    case "__main__":
-        with open("input.txt") as f:
-            lines = f.readlines()
-        print(calculate(lines))
+if __name__ == "__main__":
+    with open("input.txt") as f:
+        lines = f.readlines()
+    print(calculate(lines))
