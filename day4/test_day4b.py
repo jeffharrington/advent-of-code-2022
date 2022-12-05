@@ -1,4 +1,4 @@
-from advent4a import calculate
+from day4b import calculate
 
 
 test_input = [
@@ -10,5 +10,5 @@ test_input = [
     "2-6,4-8\n",
 ]
 score = calculate(lines=test_input)
-expected_score = 2
+expected_score = 4
 assert score == expected_score, f"Score ({score}) != expected ({expected_score})"
