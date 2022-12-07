@@ -18,7 +18,7 @@ def calculate(lines: list[str]):
         if match := re.match(CD_PATTERN, cmd):
             match match.group(1):
                 case "/":
-                    curr_path = ["/"]
+                    curr_path = [""]
                 case "..":
                     curr_path.pop()
                 case _:
@@ -26,7 +26,7 @@ def calculate(lines: list[str]):
         elif match := re.match(FILE_PATTERN, cmd):
             file_size = match.group(1)
             for i in range(len(curr_path)):
-                dir_key = "".join(curr_path[0 : len(curr_path) - i])
+                dir_key = "/".join(curr_path[0 : len(curr_path) - i])
                 dir_size[dir_key] += int(file_size)
     answer = sum([s for s in dir_size.values() if s <= 100000])
     return answer

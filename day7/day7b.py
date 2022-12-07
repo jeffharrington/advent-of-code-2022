@@ -21,7 +21,7 @@ def calculate(lines: list[str]):
         if match := re.match(CD_PATTERN, cmd):
             match match.group(1):
                 case "/":
-                    curr_path = ["/"]
+                    curr_path = [""]
                 case "..":
                     curr_path.pop()
                 case _:
@@ -29,9 +29,9 @@ def calculate(lines: list[str]):
         elif match := re.match(FILE_PATTERN, cmd):
             file_size = match.group(1)
             for i in range(len(curr_path)):
-                dir_key = "".join(curr_path[0 : len(curr_path) - i])
+                dir_key = "/".join(curr_path[0 : len(curr_path) - i])
                 dir_size[dir_key] += int(file_size)
-    current_used = dir_size["/"]
+    current_used = dir_size[""]  # root
     current_unused = TOTAL_DISK_SPACE - current_used
     need_to_free = TARGET_UNUSED_SPACE - current_unused
     candidates = [d for d in dir_size.values() if d >= need_to_free]
