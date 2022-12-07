@@ -9,9 +9,6 @@ from collections import defaultdict
 CD_PATTERN = re.compile(r"\$ cd (.*)")
 FILE_PATTERN = re.compile(r"(\d+) (.*)")
 
-TOTAL_DISK_SPACE = 70000000
-TARGET_UNUSED_SPACE = 30000000
-
 
 def calculate(lines: list[str]):
     curr_path = []
