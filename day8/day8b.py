@@ -2,8 +2,6 @@
 # Day 8: Treetop Tree House
 # https://adventofcode.com/2022/day/8
 #
-
-
 def calculate(lines: list[str]):
     matrix = []
     for line in lines:

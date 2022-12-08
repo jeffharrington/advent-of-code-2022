@@ -2,21 +2,19 @@
 # Day 8: Treetop Tree House
 # https://adventofcode.com/2022/day/8
 #
-
-
 def calculate(lines: list[str]):
     matrix = []
     for line in lines:
         matrix.append(list(line.strip()))
     visible = 0
+    last_row_index = len(matrix) - 1
+    last_col_index = len(matrix[0]) - 1
     for row in range(len(matrix)):
-        if row == 0 or row == len(matrix) - 1:
-            visible += len(matrix[0])
+        if row == 0 or row == last_row_index:
+            visible += len(matrix[row])
             continue
-        for col in range(len(matrix[0])):
-            if (col == 0 or col == len(matrix[0]) - 1) and (
-                row != 0 and row != len(matrix) - 1
-            ):
+        for col in range(len(matrix[row])):
+            if col == 0 or col == last_col_index:
                 visible += 1
             elif (
                 visible_from_left(matrix, row, col)
