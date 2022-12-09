@@ -4,8 +4,7 @@
 #
 from typing import List
 
-X = 0
-Y = 1
+X, Y = 0, 1
 
 
 def calculate(lines: list[str]):
