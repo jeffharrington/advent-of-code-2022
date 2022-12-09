@@ -12,7 +12,6 @@ def calculate(lines: list[str], num_knots=10):
     tail_visits = set()
     for _ in range(num_knots):
         knots.append([0, 0])
-    final_tail_index = num_knots - 1
     for line in lines:
         direction, count = line.strip().split(" ")
         for i in range(int(count)):
@@ -25,25 +24,21 @@ def calculate(lines: list[str], num_knots=10):
                     knots[0][Y] += 1
                 case "D":
                     knots[0][Y] -= 1
-            for knot_index in range(num_knots):
-                if knot_index == final_tail_index:
-                    continue
-                next_index = knot_index + 1
-                move = move_to_touch(knots[knot_index], knots[next_index])
-                knots[next_index][X] += move[X]
-                knots[next_index][Y] += move[Y]
-                tail_visits.add(
-                    (knots[final_tail_index][X], knots[final_tail_index][Y])
-                )
+            for curr in range(num_knots - 1):
+                next = curr + 1
+                move = move_to_touch(knots[curr], knots[next])
+                knots[next][X] += move[X]
+                knots[next][Y] += move[Y]
+            tail_visits.add((knots[-1][X], knots[-1][Y]))
     return len(tail_visits)
 
 
 def move_to_touch(head_pos: List[int], tail_pos: List[int]) -> List[int]:
     """Return the move we need to make to make them touch (n, n)"""
+    move = [0, 0]
     x_distance = head_pos[X] - tail_pos[X]
     y_distance = head_pos[Y] - tail_pos[Y]
     max_distance = max(abs(x_distance), abs(y_distance))
-    move = [0, 0]
     if max_distance > 1:
         move[X] += distance_to_move(x_distance)
         move[Y] += distance_to_move(y_distance)

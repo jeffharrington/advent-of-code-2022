@@ -31,10 +31,10 @@ def calculate(lines: list[str]):
 
 def move_to_touch(head: List[int], tail: List[int]) -> List[int]:
     """Return the move we need to make to make them touch (n, n)"""
+    move = [0, 0]
     x_distance = head[X] - tail[X]
     y_distance = head[Y] - tail[Y]
     max_distance = max(abs(x_distance), abs(y_distance))
-    move = [0, 0]
     if max_distance > 1:
         move[X] += distance_to_move(x_distance)
         move[Y] += distance_to_move(y_distance)
