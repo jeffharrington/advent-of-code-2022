@@ -14,7 +14,7 @@ def calculate(lines: list[str], num_knots=10):
         knots.append([0, 0])
     for line in lines:
         direction, count = line.strip().split(" ")
-        for i in range(int(count)):
+        for _ in range(int(count)):
             match direction:
                 case "R":
                     knots[0][X] += 1
