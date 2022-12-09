@@ -9,58 +9,47 @@ Y = 1
 
 
 def calculate(lines: list[str]):
-    head_pos = [0, 0]
-    tail_pos = [0, 0]
+    head, tail = [0, 0], [0, 0]
     tail_visits = set()
     for line in lines:
-        direction, count_str = line.strip().split(" ")
-        count = int(count_str)
-        for i in range(count):
+        direction, count = line.strip().split(" ")
+        for _ in range(int(count)):
             match direction:
                 case "R":
-                    head_pos[X] += 1
+                    head[X] += 1
                 case "L":
-                    head_pos[X] -= 1
+                    head[X] -= 1
                 case "U":
-                    head_pos[Y] += 1
+                    head[Y] += 1
                 case "D":
-                    head_pos[Y] -= 1
-            move = move_to_touch(head_pos, tail_pos)
-            tail_pos[X] += move[X]
-            tail_pos[Y] += move[Y]
-            tail_visits.add((tail_pos[X], tail_pos[Y]))
+                    head[Y] -= 1
+            move = move_to_touch(head, tail)
+            tail[X] += move[X]
+            tail[Y] += move[Y]
+            tail_visits.add((tail[X], tail[Y]))
     return len(tail_visits)
 
 
-def move_to_touch(head_pos: List[int], tail_pos: List[int]) -> List[int]:
-    x_distance = head_pos[X] - tail_pos[X]
-    y_distance = head_pos[Y] - tail_pos[Y]
+def move_to_touch(head: List[int], tail: List[int]) -> List[int]:
+    """Return the move we need to make to make them touch (n, n)"""
+    x_distance = head[X] - tail[X]
+    y_distance = head[Y] - tail[Y]
+    max_distance = max(abs(x_distance), abs(y_distance))
     move = [0, 0]
-    if x_distance > 1:
-        move[X] += 1
-        if y_distance >= 1:
-            move[Y] += 1
-        elif y_distance <= -1:
-            move[Y] -= 1
-    elif x_distance < -1:
-        move[X] -= 1
-        if y_distance >= 1:
-            move[Y] += 1
-        elif y_distance <= -1:
-            move[Y] -= 1
-    elif y_distance > 1:
-        move[Y] += 1
-        if x_distance >= 1:
-            move[X] += 1
-        elif x_distance <= -1:
-            move[X] -= 1
-    elif y_distance < -1:
-        move[Y] -= 1
-        if x_distance >= 1:
-            move[X] += 1
-        elif x_distance <= -1:
-            move[X] -= 1
+    if max_distance > 1:
+        move[X] += distance_to_move(x_distance)
+        move[Y] += distance_to_move(y_distance)
     return move
+
+
+def distance_to_move(distance: int) -> int:
+    """Return the distance (either positive or negative) to move for specified distance"""
+    if distance >= 1:
+        return 1
+    elif distance <= -1:
+        return -1
+    else:
+        return 0
 
 
 if __name__ == "__main__":

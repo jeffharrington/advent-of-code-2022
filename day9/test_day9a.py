@@ -1,11 +1,11 @@
 from day9a import calculate, move_to_touch
 
-assert move_to_touch(head_pos=[0, 0], tail_pos=[0, 0]) == [0, 0]
-assert move_to_touch(head_pos=[1, 0], tail_pos=[0, 0]) == [0, 0]
-assert move_to_touch(head_pos=[2, 0], tail_pos=[1, 0]) == [0, 0]
-assert move_to_touch(head_pos=[3, 0], tail_pos=[2, 0]) == [0, 0]
-assert move_to_touch(head_pos=[1, 3], tail_pos=[2, 4]) == [0, 0]
-assert move_to_touch(head_pos=[2, 3], tail_pos=[1, 1]) == [1, 1]
+assert move_to_touch(head=[0, 0], tail=[0, 0]) == [0, 0]
+assert move_to_touch(head=[1, 0], tail=[0, 0]) == [0, 0]
+assert move_to_touch(head=[2, 0], tail=[1, 0]) == [0, 0]
+assert move_to_touch(head=[3, 0], tail=[2, 0]) == [0, 0]
+assert move_to_touch(head=[1, 3], tail=[2, 4]) == [0, 0]
+assert move_to_touch(head=[2, 3], tail=[1, 1]) == [1, 1]
 
 test_input = [
     "R 4\n",
