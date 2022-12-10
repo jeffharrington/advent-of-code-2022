@@ -12,11 +12,9 @@ def calculate(lines: list[str]):
     for line in lines:
         stack.append(line.strip().split(" "))
     while stack:
-        instruction = stack.popleft()
         report(register, cycle)
+        instruction = stack.popleft()
         match instruction:
-            case ["noop"]:
-                pass
             case ["addx", num]:
                 stack.appendleft(["add", num])
             case ["add", num]:
@@ -25,10 +23,10 @@ def calculate(lines: list[str]):
 
 
 def report(register, cycle):
-    sprite = (register - 1, register, register + 1)
     x = (cycle % 40) - 1
+    sprite = (register - 1, register, register + 1)
     if x == 0:
-        print("")
+        print("")  # Newline
     if x in sprite:
         print("#", end="")
     else:

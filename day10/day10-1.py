@@ -2,13 +2,12 @@
 # Day 10: Cathode-Ray Tube
 # https://adventofcode.com/2022/day/10
 #
-def calculate(lines: list[str]):
+def calculate(commands: list[str]):
     register = 1
     cycle = 1
     strength = 0
-    for line in lines:
-        instruction = line.strip().split(" ")
-        match instruction:
+    for command in commands:
+        match command.strip().split(" "):
             case ["noop"]:
                 cycle, strength = tick(cycle, register, strength)
             case ["addx", num]:
@@ -19,8 +18,7 @@ def calculate(lines: list[str]):
 
 
 def tick(cycle, register, strength):
-    CYCLE_REPORTS = [20, 60, 100, 140, 180, 220]
-    if cycle in CYCLE_REPORTS:
+    if cycle in [20, 60, 100, 140, 180, 220]:
         strength += cycle * register
     return cycle + 1, strength
 
