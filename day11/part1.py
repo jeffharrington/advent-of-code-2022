@@ -2,57 +2,61 @@
 # Day 11: Monkey in the Middle
 # https://adventofcode.com/2022/day/11
 #
-import re
-from collections import deque, defaultdict
-from typing import Callable, Dict
+from collections import deque
+from dataclasses import dataclass
+from typing import Callable
 
-MONKEY_PATTERN = re.compile(r"Monkey (\d+):")
-STARTING_ITEMS_PATTERN = re.compile(r"  Starting items: (.*)$")
-OPERATION_PATTERN = re.compile(r"  Operation: (.*)$")
-TEST_PATTERN = re.compile(r"  Test: (.*)$")
-IF_TRUE_PATTERN = re.compile(r"    If true: (.*)$")
-IF_FALSE_PATTERN = re.compile(r"    If false: (.*)$")
+
+@dataclass
+class Monkey:
+    items: deque
+    operation: Callable
+    test: Callable
+    monkey_if_true: int
+    monkey_if_false: int
+    inspections: int
 
 
 def calculate(lines: list[str], num_rounds=20):
-    monkeys: list[Dict] = []
+    monkeys: list[Monkey] = []
     for i in range(0, len(lines), 7):
-        monkey_index = int(MONKEY_PATTERN.match(lines[i])[1])
-        items_str = STARTING_ITEMS_PATTERN.match(lines[i + 1])[1].split(", ")
-        operation_str = OPERATION_PATTERN.match(lines[i + 2])[1]
-        test_str = TEST_PATTERN.match(lines[i + 3])[1]
-        monkey_if_true = IF_TRUE_PATTERN.match(lines[i + 4])[1]
-        monkey_if_false = IF_FALSE_PATTERN.match(lines[i + 5])[1]
+        items_str = parse_val(lines[i + 1])
+        operation_str = parse_val(lines[i + 2])
+        test_str = parse_val(lines[i + 3])
+        monkey_if_true = parse_val(lines[i + 4])
+        monkey_if_false = parse_val(lines[i + 5])
         monkeys.append(
-            dict(
-                index=monkey_index,
-                items=deque([int(s) for s in items_str]),
+            Monkey(
+                items=deque([int(s) for s in items_str.split(", ")]),
                 operation=monkey_operation(operation_str),
                 test=monkey_test(test_str),
                 monkey_if_true=int(monkey_if_true.split(" ")[-1]),
                 monkey_if_false=int(monkey_if_false.split(" ")[-1]),
+                inspections=0,
             )
         )
-    inspections: Dict[int, int] = defaultdict(int)
-    for i in range(num_rounds):
+    for _ in range(num_rounds):
         for monkey in monkeys:
-            while monkey["items"]:
-                item = monkey["items"].popleft()
-                inspections[monkey["index"]] += 1
-                high_worry = monkey["operation"](item)
+            while monkey.items:
+                item = monkey.items.popleft()
+                high_worry = monkey.operation(item)
                 low_worry = high_worry // 3
-                if monkey["test"](low_worry):
-                    new_monkey = monkey["monkey_if_true"]
+                if monkey.test(low_worry):
+                    new_monkey = monkey.monkey_if_true
                 else:
-                    new_monkey = monkey["monkey_if_false"]
-                monkeys[new_monkey]["items"].append(low_worry)
-    ordered_inspections = sorted(inspections.values())
+                    new_monkey = monkey.monkey_if_false
+                monkeys[new_monkey].items.append(low_worry)
+                monkey.inspections += 1
+    ordered_inspections = sorted([monkey.inspections for monkey in monkeys])
     return ordered_inspections[-1] * ordered_inspections[-2]
 
 
+def parse_val(s: str) -> str:
+    return s.strip().split(": ")[1]
+
+
 def monkey_operation(operation_str: str) -> Callable:
-    operands = operation_str.split(" = ")[1].split(" ")
-    match operands:
+    match operation_str.split(" = ")[1].split(" "):
         case [n1, "+", n2]:
             if n1 == "old" and n2 == "old":
                 return lambda n: n + n
@@ -71,8 +75,7 @@ def monkey_operation(operation_str: str) -> Callable:
 
 
 def monkey_test(test_str: str) -> Callable:
-    operands = test_str.split(" ")
-    match operands:
+    match test_str.split(" "):
         case ["divisible", "by", divisor]:
             return lambda n: n % int(divisor) == 0
     return lambda n: n
