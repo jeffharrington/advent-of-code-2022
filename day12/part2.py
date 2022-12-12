@@ -4,21 +4,27 @@
 #
 from collections import deque
 
+START = "S"
+END = "E"
+
 
 def calculate(lines: list[str]):
     matrix = []
     graph = {}
-    start = (0, 0)
+    starts = []
     end = (0, 0)
     for i, line in enumerate(lines):
         row = []
         for j, char in enumerate(list(line.strip())):
-            if char == "S":
-                start = (i, j)
+            if char == START:
+                starts.append((i, j))
                 row.append(ord("a"))
-            elif char == "E":
+            elif char == END:
                 end = (i, j)
                 row.append(ord("z"))
+            elif char == "a":
+                starts.append((i, j))
+                row.append(ord(char))
             else:
                 row.append(ord(char))
         matrix.append(row)
@@ -28,29 +34,29 @@ def calculate(lines: list[str]):
             curr_cord = (i, j)
             if i > 0:
                 neighbor_coord = (i - 1, j)
-                if valid_neighbor(matrix, start, curr_cord, neighbor_coord):
+                if valid_neighbor(matrix, curr_cord, neighbor_coord):
                     neighbors.append(neighbor_coord)
             if i < len(lines) - 1:
                 neighbor_coord = (i + 1, j)
-                if valid_neighbor(matrix, start, curr_cord, neighbor_coord):
+                if valid_neighbor(matrix, curr_cord, neighbor_coord):
                     neighbors.append(neighbor_coord)
             if j > 0:
                 neighbor_coord = (i, j - 1)
-                if valid_neighbor(matrix, start, curr_cord, neighbor_coord):
+                if valid_neighbor(matrix, curr_cord, neighbor_coord):
                     neighbors.append(neighbor_coord)
             if j < len(row) - 1:
                 neighbor_coord = (i, j + 1)
-                if valid_neighbor(matrix, start, curr_cord, neighbor_coord):
+                if valid_neighbor(matrix, curr_cord, neighbor_coord):
                     neighbors.append(neighbor_coord)
             graph[(i, j)] = neighbors
-    distances, _ = dijkstra(graph, start)
-    return distances[end]
+    shortest_distance = float("inf")
+    for start in starts:
+        distances, _ = dijkstra(graph, start)
+        shortest_distance = min(shortest_distance, distances[end])
+    return shortest_distance
 
 
-def valid_neighbor(matrix, start_coord, curr_coord, neighbor_coord) -> bool:
-    if curr_coord == start_coord:
-        # All neighbors of the start node are valid
-        return True
+def valid_neighbor(matrix, curr_coord, neighbor_coord) -> bool:
     curr_val = matrix[curr_coord[0]][curr_coord[1]]
     neighbor_val = matrix[neighbor_coord[0]][neighbor_coord[1]]
     if (neighbor_val - 1) <= curr_val:
