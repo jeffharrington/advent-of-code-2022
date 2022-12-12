@@ -72,10 +72,10 @@ def dijkstra(graph, start):
     distances = {key: float("inf") for key in graph.keys()}
     previous = {key: None for key in graph.keys()}
     distances[start] = 0
-    unvisited = deque()
-    unvisited.append(start)
-    while unvisited:
-        curr = unvisited.popleft()
+    queue = deque()
+    queue.append(start)
+    while queue:
+        curr = queue.popleft()
         if curr in visited:
             continue
         curr_distance = distances[curr]
@@ -86,7 +86,7 @@ def dijkstra(graph, start):
             if next_distance <= distances[unvisited_neighbor]:
                 distances[unvisited_neighbor] = next_distance
                 previous[unvisited_neighbor] = curr
-            unvisited.append(unvisited_neighbor)
+            queue.append(unvisited_neighbor)
     return distances, previous
 
 
