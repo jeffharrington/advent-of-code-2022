@@ -43,15 +43,7 @@ def calculate(lines: list[str]):
                 if valid_neighbor(matrix, start, curr_cord, neighbor_coord):
                     neighbors.append(neighbor_coord)
             graph[(i, j)] = neighbors
-    distances, previous = dijkstra(graph, start)
-    # print("-" * 25)
-    # print(matrix)
-    # print("-" * 25)
-    # print(graph)
-    # print("-" * 25)
-    # print(distances)
-    # print("-" * 25)
-    # print(previous)
+    distances, _ = dijkstra(graph, start)
     return distances[end]
 
 
@@ -68,7 +60,7 @@ def valid_neighbor(matrix, start_coord, curr_coord, neighbor_coord) -> bool:
 
 
 def dijkstra(graph, start):
-    visited = set()  # (x, y) of visited nodes
+    visited = set()
     distances = {key: float("inf") for key in graph.keys()}
     previous = {key: None for key in graph.keys()}
     distances[start] = 0
@@ -76,12 +68,14 @@ def dijkstra(graph, start):
     unvisited.append(start)
     while unvisited:
         curr = unvisited.popleft()
+        if curr in visited:
+            continue
         curr_distance = distances[curr]
         visited.add(curr)
         unvisited_neighbors = [n for n in graph[curr] if n not in visited]
         for unvisited_neighbor in unvisited_neighbors:
             next_distance = curr_distance + 1
-            if next_distance < distances[unvisited_neighbor]:
+            if next_distance <= distances[unvisited_neighbor]:
                 distances[unvisited_neighbor] = next_distance
                 previous[unvisited_neighbor] = curr
             unvisited.append(unvisited_neighbor)
