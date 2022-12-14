@@ -11,7 +11,6 @@ def calculate(lines: list[str]):
         left_list = eval(lines[i].strip())
         right_list = eval(lines[i + 1].strip())
         correct_order = compare_lists(left_list, right_list)
-        print(left_list, "vs", right_list, correct_order)
         if correct_order:
             correct_sum += (i // 3) + 1
     return correct_sum
