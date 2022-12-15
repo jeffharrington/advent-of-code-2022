@@ -7,9 +7,9 @@ from typing import Tuple
 
 def calculate(lines: list[str]):
     all_coords = set()
-    grid = []
+    grid: list[list[str]] = []
 
-    # Get coordinates for all rocks
+    # Get coordinates for rock lines
     for line in lines:
         points = [eval(coord) for coord in line.split(" -> ")]
         for i in range(1, len(points)):
@@ -18,29 +18,9 @@ def calculate(lines: list[str]):
             coords = coordinates(point1, point2)
             all_coords.update(coords)
 
-    min_col = min([col for col, row in all_coords])
-    max_col = max([col for col, row in all_coords])
-
-    min_row = min([row for col, row in all_coords])
-    max_row = max([row for col, row in all_coords])
-
-    # Shrink the width to make it easier to see
-    reducer = min_col  # 494
-    all_coords = [((col - reducer), row) for col, row in all_coords]
-
-    min_col = min([col for col, row in all_coords])
-    max_col = max([col for col, row in all_coords])
-
-    min_row = min([row for col, row in all_coords])
-    max_row = max([row for col, row in all_coords])
-
-    print("Min Col:", min_col)
-    print("Max Col:", max_col)
-
-    print("Min Row:", min_row)
-    print("Max Row:", max_row)
-
-    print("reducer:", reducer)
+    # Determine outer bounds
+    max_col = int(max([col for col, row in all_coords]) * 1.25)  # Expand out
+    max_row = max([row for col, row in all_coords]) + 2
 
     # Initialize Grid
     for i in range(max_row + 1):
@@ -52,38 +32,38 @@ def calculate(lines: list[str]):
     for rock in all_coords:
         grid[rock[1]][rock[0]] = "#"
 
-    draw_grid(grid)
+    # Place the floor in the bottom
+    for i in range(len(grid[-1])):
+        grid[-1][i] = "#"
 
-    starting_point = (500 - reducer, 0)
+    # Simulate falling sand
+    starting_point = (500, 0)
     overflowed = False
-    print("Starting at:", starting_point)
     while not overflowed:
         curr_col, curr_row = starting_point
         grid[curr_row][curr_col] = "+"
         for _ in range(max_row + 1):
-            print(f"Sand is at: {curr_row}, {curr_col}", grid[curr_row][curr_col])
             space_below = grid[curr_row + 1][curr_col]
             if space_below in ["#", "o"]:
                 space_left = grid[curr_row + 1][curr_col - 1]
                 if space_left in ["#", "o"]:
                     space_right = grid[curr_row + 1][curr_col + 1]
                     if space_right in ["#", "o"]:
-                        grid[curr_row][curr_col] = "o"
-                        break  # At rest!
+                        grid[curr_row][curr_col] = "o"  # Rock is at rest!
+                        if starting_point == (curr_col, curr_row):
+                            overflowed = True  # We hit the top!
+                        break
                     else:
                         curr_col += 1  # Move right
                 else:
                     curr_col -= 1  # Move Left
-            curr_row += 1  # Advance
+            curr_row += 1  # Keep falling down
             if curr_row >= max_row:
-                print("Overflown row!")
-                overflowed = True
+                overflowed = True  # Falling out the bottom
                 break
             if curr_col >= max_col:
-                print("Overflown col!")
-                overflowed = True
+                overflowed = True  # Falling off edge right
                 break
-        draw_grid(grid)
 
     # Count the rocks at rest
     num_rocks = 0
@@ -91,6 +71,7 @@ def calculate(lines: list[str]):
         for col in row:
             if col == "o":
                 num_rocks += 1
+
     return num_rocks
 
 
@@ -102,8 +83,8 @@ def draw_grid(grid):
 
 
 def coordinates(coord1, coord2) -> list[Tuple[int, int]]:
-    x1, y1 = coord1  # 498, 4
-    x2, y2 = coord2  # 498, 6
+    x1, y1 = coord1
+    x2, y2 = coord2
     coords = []
     if x1 == x2:  # Moving vertically
         lower = min(y1, y2)
