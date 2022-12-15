@@ -8,80 +8,84 @@ from typing import Tuple
 def calculate(lines: list[str]):
     all_coords = set()
     grid = []
+
+    # Get coordinates for all rocks
     for line in lines:
         points = [eval(coord) for coord in line.split(" -> ")]
-        # print(points)
         for i in range(1, len(points)):
             point1 = points[i - 1]
             point2 = points[i]
             coords = coordinates(point1, point2)
-            # print("Line is:", coords)
             all_coords.update(coords)
-    # min_col = min([col for col, row in all_coords])
-    # all_coords = [(col - min_col, row) for col, row in all_coords]
-    reducer = min([col for col, row in all_coords])
-    all_coords = [((col - reducer), row) for col, row in all_coords]
-
-    max_col = max([col for col, row in all_coords])
-    max_row = max([row for col, row in all_coords])
-    print("max_col:", max_col)
-    print("max_row:", max_row)
 
     min_col = min([col for col, row in all_coords])
+    max_col = max([col for col, row in all_coords])
+
     min_row = min([row for col, row in all_coords])
-    print("min_col:", min_col)
-    print("min_row:", min_row)
+    max_row = max([row for col, row in all_coords])
+
+    # Shrink the width to make it easier to see
+    reducer = min_col  # 494
+    all_coords = [((col - reducer), row) for col, row in all_coords]
+
+    min_col = min([col for col, row in all_coords])
+    max_col = max([col for col, row in all_coords])
+
+    min_row = min([row for col, row in all_coords])
+    max_row = max([row for col, row in all_coords])
+
+    print("Min Col:", min_col)
+    print("Max Col:", max_col)
+
+    print("Min Row:", min_row)
+    print("Max Row:", max_row)
+
+    print("reducer:", reducer)
 
     # Initialize Grid
     for i in range(max_row + 1):
         grid.append([])
         for j in range(max_col + 1):
             grid[i].append(".")
-    print("Rows:", len(grid))
-    print("Cols:", len(grid[0]))
 
-    # Add rocks
+    # Fill in the rocks
     for rock in all_coords:
-        # print("Rock at:", rock[0], ",", rock[1])
         grid[rock[1]][rock[0]] = "#"
 
-    # Stream sand
-    starting_point = (500 - reducer, 0)
-    print("Starting point is:", starting_point)
-    overflowed = False
-    while not overflowed:
-        # print("*" * 100)
-        # print("Max Row:", max_row)
-        # print("Max Col:", max_col)
-        rock_col, rock_row = starting_point
-        for curr_row in range(max_row + 1):
-            if curr_row >= max_row:
-                overflowed = True
-                break
-            if rock_col - 1 < 0:
-                overflowed = True
-                break
-            if rock_col + 1 >= max_col:
-                overflowed = True
-                break
-            # print(f"Curr {curr_row}, {rock_col}:", grid[curr_row][rock_col])
-            # print(f"Below {curr_row + 1}, {rock_col}:", space_below)
-            space_below = grid[curr_row + 1][rock_col]
-            space_left = grid[curr_row + 1][rock_col - 1]
-            space_right = grid[curr_row + 1][rock_col + 1]
-            # print(f"Left {curr_row + 1}, {rock_col - 1}:", space_left)
-            # print(f"Right {curr_row + 1}, {rock_col + 1}:", space_right)
-            if space_below in ["#", "o"]:
-                if space_left in ["#", "o"]:
-                    if space_right in ["#", "o"]:
-                        grid[curr_row][rock_col] = "o"
-                        break
-                    else:
-                        rock_col += 1
-                else:
-                    rock_col -= 1
     draw_grid(grid)
 
+    starting_point = (500 - reducer, 0)
+    overflowed = False
+    print("Starting at:", starting_point)
+    while not overflowed:
+        curr_col, curr_row = starting_point
+        grid[curr_row][curr_col] = "+"
+        for _ in range(max_row + 1):
+            print(f"Sand is at: {curr_row}, {curr_col}", grid[curr_row][curr_col])
+            space_below = grid[curr_row + 1][curr_col]
+            if space_below in ["#", "o"]:
+                space_left = grid[curr_row + 1][curr_col - 1]
+                if space_left in ["#", "o"]:
+                    space_right = grid[curr_row + 1][curr_col + 1]
+                    if space_right in ["#", "o"]:
+                        grid[curr_row][curr_col] = "o"
+                        break  # At rest!
+                    else:
+                        curr_col += 1  # Move right
+                else:
+                    curr_col -= 1  # Move Left
+            curr_row += 1  # Advance
+            if curr_row >= max_row:
+                print("Overflown row!")
+                overflowed = True
+                break
+            if curr_col >= max_col:
+                print("Overflown col!")
+                overflowed = True
+                break
+        draw_grid(grid)
+
+    # Count the rocks at rest
     num_rocks = 0
     for row in grid:
         for col in row:
